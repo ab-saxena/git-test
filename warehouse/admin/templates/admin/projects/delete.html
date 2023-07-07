@@ -1,0 +1,47 @@
+{#
+ # Licensed under the Apache License, Version 2.0 (the "License");
+ # you may not use this file except in compliance with the License.
+ # You may obtain a copy of the License at
+ #
+ # http://www.apache.org/licenses/LICENSE-2.0
+ #
+ # Unless required by applicable law or agreed to in writing, software
+ # distributed under the License is distributed on an "AS IS" BASIS,
+ # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+-#}
+
+{% set project_name = project.normalized_name %}
+
+<form action="{{ request.route_path('admin.project.delete', project_name=project_name) }}" method="POST">
+  <input name="csrf_token" type="hidden" value="{{ request.session.get_csrf_token() }}">
+
+  <div class="card card-danger collapsed-card">
+    <div class="card-header">
+      <h3 class="card-title">Delete Project</h3>
+      <div class="card-tools">
+        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <p>
+        Deleting will irreversibly delete this project along with
+        <a href="{{ request.route_path('admin.project.releases', project_name=project_name) }}">{{ project.releases|length() }} releases</a>.
+      </p>
+      <div class="form-group col-sm-12">
+        <label for="confirm_project_name">
+          Are you sure you want to delete <strong>{{ project_name }}</strong>?
+        </label>
+        <input name="confirm_project_name" id="confirm_project_name" class="form-control" type="text" placeholder="Enter project name to confirm" {{ "disabled" if not request.has_permission('admin') }} autocomplete="off" autocorrect="off" autocapitalize="off">
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <div class="float-right">
+        <button type="submit" class="btn btn-primary" title="{{ 'Deleting requires superuser privileges' if not request.has_permission('admin') }}" {{ "disabled" if not request.has_permission('admin') }}>Confirm</button>
+      </div>
+    </div>
+  </div>
+</form>
